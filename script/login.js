@@ -11,6 +11,7 @@ function maybe_login(event){
 }
 
 function login() {
+		$("#loading").attr("class","loading");
         $.ajax({
         method: "POST",
         url: "LOGIN-PAGE",
