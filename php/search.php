@@ -1,6 +1,7 @@
 <?php
 
 require_once 'connection.php';
+require_once 'carBuilder.php';
     $data = $_POST['search'];
 	$terms = explode(" ", $data);
 	
@@ -37,19 +38,4 @@ require_once 'connection.php';
     $cars = build_car_array($result);
     mysqli_close($connection);
     echo json_encode($cars);
-
-
-//make JSON for cars
-function build_car_array($results) {
-	$final_result = array();
-	$row_count = mysqli_num_rows($results);
-	for($i=0;$i<$row_count;++$i){
-		$row = mysqli_fetch_array($results);
-		$image = 'data:' . $row["Picture_Type"] . ';base64,' . base64_encode($row["Picture"]);
-		$item = array("make"=>$row["Make"],"model"=>$row["Model"], "year"=>$row["YearMade"], "color"=>$row["Color"], "ID"=>$row["ID"], "picture"=>$image);
-		$final_result["items"][]=$item;
-	}
-	return $final_result;
-}
-
 ?>

@@ -11,7 +11,7 @@ function findCars(){
 	  url: "server/search.php",
 	  data: {search: text},
 	  success: function(data){
-		  renderCars(data);
+		  renderCars(data.cars);
 	  },
 	  dataType: "json"
 	});
