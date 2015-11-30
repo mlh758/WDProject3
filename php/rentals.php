@@ -63,10 +63,10 @@ function returnCar($connection, $ID, $customerID, $carID){
 	}
 }
 function customerHistory($connection, $customerID, $flag){
-	$query = "SELECT c.ID, c.`Picture`, c.`Picture_type`, c.`Color`, cs.`Make`, cs.`Model`, cs.`YearMade`, cs.`Size` ";
+	$query = "SELECT c.ID, c.`Picture`, c.`Picture_type`, c.`Color`, cs.`Make`, cs.`Model`, cs.`YearMade`, cs.`Size`, r.`ID` as rentalID, r.`rentDate`, r.`returnDate` ";
     $query .= "FROM Car c, CarSpecs cs, Rental r WHERE r.`CustomerID` = '$customerID' AND r.`status` = $flag AND r.`carID` = c.`ID` AND  c.`CarSpecsID` = cs.`ID`";
 	$data = runQuery($connection, $query);
-	$cars = build_car_array($data);
+	$cars = build_rented_car_array($data);
 	return $cars["cars"];
 }
 function runQuery($connection, $string){
