@@ -11,16 +11,14 @@ if (isset($_POST["action"])) {
 
     switch ($action) {       
         case "rent":
-			$id = sanitizeMYSQL($connection, $_POST["ID"]);
 			$customerID = sanitizeMYSQL($connection, $_POST["CustomerID"]);
 			$carID = sanitizeMYSQL($connection, $_POST["carID"]);
-            $results["Status"] = rentCar($connection, $ID, $customerID, $carID);
+            $results["Status"] = rentCar($connection, $customerID, $carID);
             break;
 		case "return":
-			$id = sanitizeMYSQL($connection, $_POST["ID"]);
 			$customerID = sanitizeMYSQL($connection, $_POST["CustomerID"]);
 			$carID = sanitizeMYSQL($connection, $_POST["carID"]);
-            $results["Status"] = returnCar($connection, $ID, $customerID, $carID);
+            $results["Status"] = returnCar($connection, $customerID, $carID);
 			break;
 		case "history":
 			$customerID = sanitizeMYSQL($connection, $_POST["CustomerID"]);
@@ -37,8 +35,8 @@ if (isset($_POST["action"])) {
 }
 
 function rentCar($connection, $ID, $customerID, $carID){
-	$query = "INSERT INTO `rental` (`ID`, `rentDate`, `returnDate`, `status`, `CustomerID`, `carID`) ";
-	$query .= "VALUES('$ID', CURDATE(), NULL, 1, '$customerID', '$carID')";
+	$query = "INSERT INTO `rental` (`rentDate`, `returnDate`, `status`, `CustomerID`, `carID`) ";
+	$query .= "VALUES(CURDATE(), NULL, 1, '$customerID', '$carID')";
 	$result1 = runQuery($connection, $query);
 	$query = "UPDATE `car` SET `status` = 2 WHERE `id` = $carID";
 	$result2 = runQuery($connection, $query);
@@ -49,7 +47,7 @@ function rentCar($connection, $ID, $customerID, $carID){
 		return "Failed";
 	}
 }
-function returnCar($connection, $ID, $customerID, $carID){
+function returnCar($connection, $customerID, $carID){
 	$query = "UPDATE `rental` SET `returnDate` = CURDATE(), `status` = 2 WHERE `status` = 1 ";
 	$query .= "AND `customerID` = '$customerID' AND `carID` = '$carID'";
 	$result1 = runQuery($connection, $query);
