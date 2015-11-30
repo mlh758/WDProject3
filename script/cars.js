@@ -1,14 +1,14 @@
 $(document).ready(init);
 
 function init() {
-	$("#find-car").click()
+	$("#find-car").click(findCars);
 }
 
 function findCars(){
 	var text = $("#find-car-input").val();
 	$.ajax({
 	  type: "POST",
-	  url: "server/search.php",
+	  url: "php/search.php",
 	  data: {search: text},
 	  success: function(data){
 		  renderCars(data.cars);

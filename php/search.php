@@ -19,14 +19,15 @@ require_once 'carBuilder.php';
 				$clause .= "cs.`YearMade` = $item";
 			}
 			else{
-				$clause .= "c.`Color` LIKE '%$item' OR ";
-				$clause .= "cs.`Make` LIKE '$item' OR ";
-				$clause .= "cs.`Model` LIKE '$item' OR ";
-				$clause .= "cs.`Size` LIKE '$item'";
+				$clause .= "c.`Color` LIKE '%$item%' OR ";
+				$clause .= "cs.`Make` LIKE '%$item%' OR ";
+				$clause .= "cs.`Model` LIKE '%$item%' OR ";
+				$clause .= "cs.`Size` LIKE '%$item%'";
 			}
 			$count += 1;
 		}
 		$clause .= ");";
+                $query .= $clause;
 	}
 	
     $result = mysqli_query($connection, $query);
