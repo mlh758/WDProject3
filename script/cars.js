@@ -4,6 +4,9 @@ function init() {
 	$("#find-car").click(findCars);
         $("#rented_cars_tab").click(getActiveRentals);
         $("#returned_cars_tab").click(getReturnedCars);
+        
+        $(".car_rent").click(rentCar(this));
+        $(".return_car").click(returnCar(this));
 }
 
 function findCars(){
@@ -51,3 +54,48 @@ function renderCars(cars, location, template){
 	var searchMaker = new htmlMaker(searchTemplate);
 	$(location).html(searchMaker.getHTML(cars));
 }
+
+function rentCar(element)
+{
+    var autoID = $(element).attr("id");
+    $.ajax({
+       type: "POST",
+       url: "php/rentals.php",
+       data: {action: "rent", CustomerID: "j.smith", carID: autoID},
+       success: function(data)
+       {
+           if (data.Status == "Success")
+           {
+               //print dialog (modify CSS) exclaiming success.
+           }
+           else
+           {
+               //print dialog (modify CSS) exclaiming failure. :^(
+           }
+       }, 
+       dataType: "json"
+    });
+};
+
+function returnCar(element)
+{
+    var autoID = $(element).attr("data-rental-id");
+    $.ajax({
+       type: "POST",
+       url: "php/rentals.php",
+       data: {action: "return", CustomerID: "j.smith", carID: autoID},
+       success: function(data)
+       {
+           if (data.Status == "Success")
+           {
+               //print dialog exclaiming success.
+           }
+           else
+           {
+               //print dialog exclaiming failure. :^(
+           }
+       }, 
+       dataType: "json"
+    });
+};
+    
