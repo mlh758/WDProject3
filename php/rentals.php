@@ -16,9 +16,8 @@ if (isset($_POST["action"])) {
             $results["Status"] = rentCar($connection, $customerID, $carID);
             break;
 		case "return":
-			$customerID = sanitizeMYSQL($connection, $_POST["CustomerID"]);
-			$carID = sanitizeMYSQL($connection, $_POST["carID"]);
-            $results["Status"] = returnCar($connection, $customerID, $carID);
+			$rentalID = sanitizeMYSQL($connection, $_POST["rentalID"]);
+                        $results["Status"] = returnCar($connection, $rentalID);
 			break;
 		case "history":
 			$customerID = sanitizeMYSQL($connection, $_POST["CustomerID"]);
@@ -47,11 +46,18 @@ function rentCar($connection, $customerID, $carID){
 		return "Failed";
 	}
 }
-function returnCar($connection, $customerID, $carID){
-	$query = "UPDATE `rental` SET `returnDate` = CURDATE(), `status` = 2 WHERE `status` = 1 ";
-	$query .= "AND `customerID` = '$customerID' AND `carID` = '$carID'";
+function returnCar($connection, $rentalID){
+	$query = "UPDATE `rental` SET `returnDate` = CURDATE(), `status` = 2 WHERE `ID` = $rentalID";
 	$result1 = runQuery($connection, $query);
-	$query = "UPDATE `car` SET `status` = 1 WHERE `id` = $carID";
+        $query = "SELECT `carID` from `rental` where `ID` = $rentalID";
+        $temp = runQuery($connection, $query);
+        $row_count = mysqli_num_rows($temp);
+        if($row_count != 1){
+            return "Failed, no carID found";
+        }
+        $row = mysqli_fetch_array($temp);
+        $carID = $row["carID"];
+	$query = "UPDATE `car` SET `status` = 1 WHERE `ID` = $carID";
 	$result2 = runQuery($connection, $query);
 	if(result1 && result2){
 		return "Success";
@@ -62,7 +68,7 @@ function returnCar($connection, $customerID, $carID){
 }
 function customerHistory($connection, $customerID, $flag){
 	$query = "SELECT c.ID, c.`Picture`, c.`Picture_type`, c.`Color`, cs.`Make`, cs.`Model`, cs.`YearMade`, cs.`Size`, r.`ID` as rentalID, r.`rentDate`, r.`returnDate` ";
-    $query .= "FROM Car c, CarSpecs cs, Rental r WHERE r.`CustomerID` = '$customerID' AND r.`status` = $flag AND r.`carID` = c.`ID` AND  c.`CarSpecsID` = cs.`ID`";
+        $query .= "FROM Car c, CarSpecs cs, Rental r WHERE r.`CustomerID` = '$customerID' AND r.`status` = $flag AND r.`carID` = c.`ID` AND  c.`CarSpecsID` = cs.`ID`";
 	$data = runQuery($connection, $query);
 	$cars = build_rented_car_array($data);
 	return $cars["cars"];
@@ -71,7 +77,7 @@ function runQuery($connection, $string){
 	$result = mysqli_query($connection, $string);
 
     if (!$result)
-        die("Database access failed: " . mysqli_error($connection));
+        die("Database access failed: " . mysqli_error($connection) . $string);
 	return $result;
 }
 ?>

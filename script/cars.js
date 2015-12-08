@@ -85,11 +85,11 @@ function rentCar(element)
 
 function returnCar(element)
 {
-    var autoID = $(element).attr("data-rental-id");
+    var ID = $(element).attr("data-rental-id");
     $.ajax({
        type: "POST",
        url: "php/rentals.php",
-       data: {action: "return", CustomerID: "j.smith", carID: autoID},
+       data: {action: "return", rentalID: ID},
        success: function(data)
        {
            if (data.Status == "Success")
