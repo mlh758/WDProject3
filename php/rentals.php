@@ -33,8 +33,8 @@ if (isset($_POST["action"])) {
     }
     echo json_encode($results);
 }
-
-function rentCar($connection, $ID, $customerID, $carID){
+//2nd parameter $ID removed. It wasn't being called by the action switch statement.
+function rentCar($connection, $customerID, $carID){
 	$query = "INSERT INTO `rental` (`rentDate`, `returnDate`, `status`, `CustomerID`, `carID`) ";
 	$query .= "VALUES(CURDATE(), NULL, 1, '$customerID', '$carID')";
 	$result1 = runQuery($connection, $query);

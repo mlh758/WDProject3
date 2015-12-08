@@ -4,19 +4,19 @@ function init() {
 	$("#find-car").click(findCars);
         $("#rented_cars_tab").click(getActiveRentals);
         $("#returned_cars_tab").click(getReturnedCars);
-        
-        $(".car_rent").click(rentCar(this));
-        $(".return_car").click(returnCar(this));
 }
 
 function findCars(){
 	var text = $("#find-car-input").val();
+                
 	$.ajax({
 	  type: "POST",
 	  url: "php/search.php",
 	  data: {search: text},
 	  success: function(data){
 		  renderCars(data.cars, "#search_results", "#find-car-template");
+                  //Attach event handler to rent button.
+                  $(".car_rent").on("click", function() {rentCar(this);});
 	  },
 	  dataType: "json"
 	});
@@ -29,6 +29,8 @@ function getActiveRentals(){
         data: {action: "activeRentals", CustomerID: "j.smith"},
         success: function(data){
 		  renderCars(data.cars, "#rented_cars", "#rented-car-template");
+                  //Attach event handler to return button.
+                  $(".return_car").on("click", function() {returnCar(this);});
 	  },
         dataType: "json"
     });
@@ -66,11 +68,15 @@ function rentCar(element)
        {
            if (data.Status == "Success")
            {
-               //print dialog (modify CSS) exclaiming success.
+               //Display success
+               alert("Car was rented successfully.");
+               findCars();
            }
            else
            {
-               //print dialog (modify CSS) exclaiming failure. :^(
+               //Display failure. :^(
+               alert("Car was not rented successfully.")
+               findCars();
            }
        }, 
        dataType: "json"
@@ -88,11 +94,15 @@ function returnCar(element)
        {
            if (data.Status == "Success")
            {
-               //print dialog exclaiming success.
+               //Display success
+               alert("Car was returned successfully.");
+               getActiveRentals();
            }
            else
            {
-               //print dialog exclaiming failure. :^(
+               //Dialog exclaiming failure. :^(
+               alert("Car return failed.");
+               getActiveRentals();
            }
        }, 
        dataType: "json"
