@@ -2,6 +2,10 @@
 
 require_once 'connection.php';
 require_once 'carBuilder.php';
+session_start(); //start the session
+
+if(($_SESSION) && count($_SESSION) > 0 && time() < $_SESSION['start'] + 60 * 5){
+    $_SESSION['start'] = time(); //reset the session start time
     $data = $_POST['search'];
 	$terms = explode(" ", $data);
 	
@@ -39,4 +43,5 @@ require_once 'carBuilder.php';
     $cars = build_car_array($result);
     mysqli_close($connection);
     echo json_encode($cars);
+}
 ?>
