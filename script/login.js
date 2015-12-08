@@ -11,10 +11,10 @@ function maybe_login(event){
 }
 
 function login() {
-		$("#loading").attr("class","loading");
-        $.ajax({
+    $("#loading").attr("class","loading");
+    $.ajax({
         method: "POST",
-        url: "LOGIN-PAGE",
+        url: "php/login.php",
         dataType: "text",
         data: new FormData($("#login_form")[0]),
         processData: false,
@@ -29,11 +29,3 @@ function login() {
         }
     });
 }
-
-
-
-
-
-
-
-
