@@ -75,7 +75,7 @@ function rentCar(element)
        data: {action: "rent", carID: autoID},
        success: function(data)
        {
-           if (data.Status == "Success")
+           if (data.Status === "Success")
            {
                //Display success
                alert("Car was rented successfully.");
@@ -101,13 +101,13 @@ function returnCar(element)
        data: {action: "return", rentalID: ID},
        success: function(data)
        {
-           if (data.Status == "Success")
+           if (data.Status === "Success")
            {
                //Display success
                alert("Car was returned successfully.");
                getActiveRentals();
            }
-           if (data.Status == "Failed"){
+           if (data.Status === "Failed"){
                alert("Car return failed.");
            }
        }, 
@@ -121,7 +121,7 @@ function logout() {
         url: "php/rentals.php",
         data: {action: "logout"},
         success: function (data) {
-            if (data.Status=="Success") {
+            if (data.Status === "Success") {
                 window.location.assign("index.html");
             }
         }, 
@@ -133,10 +133,10 @@ function addUsername(){
     $.ajax({
         type:"POST",
         url:"php/rentals.php",
-        data:{action: "addUsername"},
+        data:{action: "getName"},
         success:function(data){
-            if(data.Status=="Success"){
-                $("#username").html(data.Username);
+            if(data.Status === "Success"){
+                $("#username").html(data.Name);
             }
         },
         dataType:"json"

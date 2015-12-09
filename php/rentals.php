@@ -42,6 +42,10 @@ if (isset($_POST["action"]) && is_session_active()) {
             $results["Status"] = "Success";
             $results["Username"] = $_SESSION["username"];
             break;
+        case "getName":
+            $results["Name"] = getUsersName($connection);
+            $results["Status"] = "Success";
+            break;
     }
     echo json_encode($results);
 }
@@ -51,9 +55,14 @@ function is_session_active() {
 }
 
 function getUsersName($connection){
+    $returnValue = "";
     $customerID = sanitizeMYSQL($connection, $_SESSION["username"]);
     $query = "SELECT `Name` FROM `customer` WHERE `ID` = '$customerID'";
-    return runQuery($connection, $query);
+    $result = runQuery($connection, $query);
+    if(mysqli_num_rows($result) == 1){
+        $returnValue = mysqli_fetch_array($result)["Name"];
+    }
+    return $returnValue;
 }
 
 function rentCar($connection, $customerID, $carID){
