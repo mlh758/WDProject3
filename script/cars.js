@@ -5,8 +5,6 @@ function init() {
         $("#rented_cars_tab").click(getActiveRentals);
         $("#returned_cars_tab").click(getReturnedCars);
         
-        $(".car_rent").click(rentCar(this));
-        $(".return_car").click(returnCar(this));
         $("#logout-link").click(logout);
         window.onload = addUsername;
 }
@@ -19,6 +17,7 @@ function findCars(){
 	  data: {search: text},
 	  success: function(data){
 		  renderCars(data.cars, "#search_results", "#find-car-template");
+                  $(".car_rent").on("click", function() {rentCar(this);});
 	  },
 	  dataType: "json"
 	});
@@ -28,9 +27,16 @@ function getActiveRentals(){
     $.ajax({
         type: "POST",
         url: "php/rentals.php",
-        data: {action: "activeRentals"},
+        data: {action: "activeRentals", token: Date.now().toString() },
         success: function(data){
-		  renderCars(data.cars, "#rented_cars", "#rented-car-template");
+                  if(data.carCount === 0){
+                      $("#rented_cars").html("No cars currently rented");
+                  }
+                  else{
+                      renderCars(data.cars, "#rented_cars", "#rented-car-template");
+                      $(".return_car").on("click", function() {returnCar(this);});
+                  }
+		  
 	  },
         dataType: "json"
     });
@@ -42,6 +48,9 @@ function getReturnedCars(){
         url: "php/rentals.php",
         data: {action: "history"},
         success: function(data){
+                  if(data.carCount === 0){
+                      $("#rented_cars").html("No vehicle history found");
+                  }
 		  renderCars(data.cars, "#returned_cars", "#returned-car-template");
 	  },
         dataType: "json"
@@ -68,11 +77,15 @@ function rentCar(element)
        {
            if (data.Status == "Success")
            {
-               //print dialog (modify CSS) exclaiming success.
+               //Display success
+               alert("Car was rented successfully.");
+               findCars();
            }
            else
            {
-               //print dialog (modify CSS) exclaiming failure. :^(
+               //Display failure. :^(
+               alert("Car was not rented successfully.");
+               findCars();
            }
        }, 
        dataType: "json"
@@ -90,11 +103,12 @@ function returnCar(element)
        {
            if (data.Status == "Success")
            {
-               //print dialog exclaiming success.
+               //Display success
+               alert("Car was returned successfully.");
+               getActiveRentals();
            }
-           else
-           {
-               //print dialog exclaiming failure. :^(
+           if (data.Status == "Failed"){
+               alert("Car return failed.");
            }
        }, 
        dataType: "json"

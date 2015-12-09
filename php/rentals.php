@@ -13,7 +13,7 @@ if (isset($_POST["action"]) && is_session_active()) {
     switch ($action) {       
         case "rent":
                 $customerID = sanitizeMYSQL($connection, $_SESSION["username"]);
-                $carID = sanitizeMYSQL($connection, $_SESSION["username"]);
+                $carID = sanitizeMYSQL($connection, $_POST["carID"]);
                 $results["Status"] = rentCar($connection, $customerID, $carID);
                 break;
         case "return":
@@ -24,11 +24,15 @@ if (isset($_POST["action"]) && is_session_active()) {
                 $customerID = sanitizeMYSQL($connection, $_SESSION["username"]);
                 $data = customerHistory($connection, $customerID, 2);
                 $results["cars"] = $data;
+                $results["carCount"] = count($data);
+                $results["Status"] = "Success";
                 break;
         case "activeRentals":
                 $customerID = sanitizeMYSQL($connection, $_SESSION["username"]);
                 $data = customerHistory($connection, $customerID, 1);
                 $results["cars"] = $data;
+                $results["carCount"] = count($data);
+                $results["Status"] = "Success";
                 break;
         case "logout":
             logout();
@@ -52,9 +56,9 @@ function getUsersName($connection){
     return runQuery($connection, $query);
 }
 
-function rentCar($connection, $ID, $customerID, $carID){
+function rentCar($connection, $customerID, $carID){
 	$query = "INSERT INTO `rental` (`rentDate`, `returnDate`, `status`, `CustomerID`, `carID`) ";
-	$query .= "VALUES(CURDATE(), NULL, 1, '$customerID', '$carID')";
+	$query .= "VALUES(CURDATE(), NULL, 1, '$customerID', $carID)";
 	$result1 = runQuery($connection, $query);
 	$query = "UPDATE `car` SET `status` = 2 WHERE `id` = $carID";
 	$result2 = runQuery($connection, $query);
